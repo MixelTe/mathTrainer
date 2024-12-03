@@ -2,6 +2,8 @@ import * as Lib from "./littleLib.js";
 import type { Task } from "./task.js";
 import { TASKS } from "./tasks.js";
 
+let number = 1;
+
 export class Block
 {
 	private taskEl;
@@ -9,10 +11,18 @@ export class Block
 	private answerEl;
 	private TaskCls: typeof Task
 	private count = 1;
-	private countEl = Lib.Div("taskCount", "1");
+	private countEl = Lib.Input("taskCount", "number");
+	private number;
 
 	constructor()
 	{
+		this.number = number++;
+		this.countEl.valueAsNumber = this.count;
+		this.countEl.addEventListener("change", () =>
+		{
+			this.count = this.countEl.valueAsNumber;
+			this.recreateTask();
+		});
 		this.taskEl = Lib.Div(["block", "task"], [
 			Lib.Div("taskControl", [
 				this.createSelect(),
@@ -21,10 +31,12 @@ export class Block
 				Lib.Button([], "+", () => { this.count += 1; this.recreateTask() }),
 				Lib.Button([], "Del", () => { this.delete() }),
 			]),
+			Lib.Div([], `№ ${this.number}`),
 			this.taskInnerEl,
 		]);
 		this.answerEl = Lib.Div(["block", "answer"]);
-		this.TaskCls = TASKS.test1;
+		this.TaskCls = TASKS.TaskAdd2;
+		// this.TaskCls = TASKS.TaskArifmetika3;
 		this.recreateTask(true);
 	}
 
@@ -56,13 +68,14 @@ export class Block
 		if (isNew)
 			this.count = this.TaskCls.DefCount;
 		this.count = Math.max(this.count, 1);
-		this.countEl.innerText = `${this.count}`;
+		this.countEl.valueAsNumber = this.count;
 		task.count = this.count;
 		const cont = this.taskInnerEl.parentElement!;
 		cont.removeChild(this.taskInnerEl);
 		this.taskInnerEl = task.getTask();
 		cont.appendChild(this.taskInnerEl);
 		this.answerEl.innerHTML = "";
+		this.answerEl.appendChild(Lib.Div([], `№ ${this.number}`));
 		this.answerEl.appendChild(task.getAnswer());
 	}
 

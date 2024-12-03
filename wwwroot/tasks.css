@@ -1,0 +1,18 @@
+.taskFormulas {
+	display: grid;
+	grid-template-columns: repeat(var(--cols, 3), 1fr);
+	gap: 1rem 2rem;
+	flex-wrap: wrap;
+}
+.answer .taskFormulas {
+	gap: 0.5rem 2rem;
+}
+.taskFormulas > div {
+	display: flex;
+	gap: 0.5rem;
+}
+.taskInput {
+	display: inline-block;
+	width: 1.5rem;
+	border-bottom: 1px solid black;
+}
