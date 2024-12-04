@@ -36,7 +36,7 @@ export class Block
 		]);
 		this.answerEl = Lib.Div(["block", "answer"]);
 		this.TaskCls = TASKS.TaskAdd2;
-		this.TaskCls = TASKS.TaskLinearGraph;
+		// this.TaskCls = TASKS.TaskLinearGraph;
 		this.recreateTask(true);
 	}
 
