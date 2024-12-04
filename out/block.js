@@ -29,7 +29,7 @@ export class Block {
         ]);
         this.answerEl = Lib.Div(["block", "answer"]);
         this.TaskCls = TASKS.TaskAdd2;
-        // this.TaskCls = TASKS.TaskArifmetika3;
+        this.TaskCls = TASKS.TaskLinearGraph;
         this.recreateTask(true);
     }
     createSelect() {
@@ -55,6 +55,7 @@ export class Block {
         const task = new this.TaskCls();
         if (isNew)
             this.count = this.TaskCls.DefCount;
+        this.taskEl.classList.toggle("taskControl_disableCount", this.TaskCls.DefCount < 0);
         this.count = Math.max(this.count, 1);
         this.countEl.valueAsNumber = this.count;
         task.count = this.count;
