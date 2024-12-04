@@ -1,13 +1,14 @@
+import { formulaTree, treeToString } from "./formulaTree.js";
 import { CDOT, round } from "./functions.js";
 import * as Lib from "./littleLib.js";
-import { TaskFormulas } from "./task.js";
+import { frac, Task, TaskFormulas } from "./task.js";
 
 export class TaskAdd2 extends TaskFormulas
 {
 	static Name = "Сложение двузначных";
 	static DefCount = 12;
 	protected Cols = 4;
-	protected genTask()
+	protected genFormula()
 	{
 		const a = Lib.randomInt(1, 100);
 		const b = Lib.randomInt(1, 100);
@@ -22,7 +23,7 @@ export class TaskArifmetika1 extends TaskFormulas
 	static Name = "Арифметика 1";
 	static DefCount = 9;
 	protected Cols = 3;
-	protected genTask()
+	protected genFormula()
 	{
 		const mode = Lib.randomInt(1, 4);
 		const r = mode == 1 ? [100, 10000] : [10, 100];
@@ -61,7 +62,7 @@ export class TaskArifmetika2 extends TaskFormulas
 	static Name = "Арифметика 2";
 	static DefCount = 9;
 	protected Cols = 3;
-	protected genTask()
+	protected genFormula()
 	{
 		const mode = Lib.randomInt(1, 4);
 		const r = mode == 1 ? [100, 10000] : [10, 100];
@@ -100,7 +101,7 @@ export class TaskArifmetika3 extends TaskFormulas
 	static Name = "Арифметика 3";
 	static DefCount = 6;
 	protected Cols = 2;
-	protected genTask()
+	protected genFormula()
 	{
 		if (Lib.random_boolean())
 		{
@@ -154,9 +155,84 @@ export class TaskArifmetika3 extends TaskFormulas
 	}
 }
 
+export class TaskArifmetika4 extends TaskFormulas
+{
+	static Name = "Арифметика 4";
+	static DefCount = 4;
+	protected Cols = 1;
+	protected genFormula()
+	{
+		const tree = formulaTree(Lib.randomInt(-1000, 1000), 8, false);
+		const answer = round(tree.v);
+		const task = Lib.Div([], [treeToString(tree), " = ", Lib.Span("taskInput")]);
+		return { task, answer };
+	}
+}
+
+export class TaskLinearSystem extends TaskFormulas
+{
+	static Name = "Пересечение линейных графиков";
+	static DefCount = 4;
+	protected Title = "Найдите координаты точки пересечения графиков функций";
+	protected Cols = 2;
+	protected genFormula()
+	{
+		const k1 = Lib.randomInt(11, 100) / 10;
+		const k2 = (() => { let k = k1; while (k == k1) k = Lib.randomInt(11, 100) / 10; return k; })();
+		const xk = (k1 - k2) * Lib.randomInt(-10, 10);
+		const b1 = Lib.randomInt(11, 100) / 10;
+		const b2 = xk + b1;
+		// y = k1*x + b1
+		// y = k2*x + b2
+		const x = (b2 - b1) / (k1 - k2);
+		const y = k1 * x + b1;
+		const renderV = (v: number) => v > 0 ? `+ ${v}` : `- ${-v}`;
+		const answer = Lib.Div([], `x = ${round(x)}, y = ${round(y)}`);
+		const task = Lib.Div([], [
+			Lib.Span("mgr", `y = ${round(k1)}x ${renderV(round(b1))};`),
+			Lib.Span([], `y = ${round(k2)}x ${renderV(round(b2))}`),
+		]);
+		return { task, answer };
+	}
+}
+
+export class TaskLinearGraph extends TaskFormulas
+{
+	static Name = "Построение лин. графика по точкам";
+	static DefCount = 3;
+	protected Title = "Задайте линейную функцию проходящую через данные точки";
+	protected Cols = 3;
+	protected genFormula()
+	{
+		const x1 = Lib.randomInt(-10, 11);
+		const y1 = Lib.randomInt(-10, 11);
+		const genV = (ne: number) => { let v = ne; while (v == ne) v = Lib.randomInt(-10, 11); return v; };
+		const x2 = genV(x1);
+		const y2 = genV(y1);
+		const kt = (y2 - y1);
+		const kb = (x2 - x1);
+		const bt = y1 * kb - x1 * kt;
+		const bb = kb;
+		const answer = Lib.Div([], [
+			Lib.Span([], `y = `),
+			frac(kt, kb, false),
+			Lib.Span([], `x `),
+			frac(bt, bb, true, true),
+		]);
+		const task = Lib.Div([], [
+			Lib.Span("mgr", `A(${round(x1)}; ${round(y1)}),`),
+			Lib.Span([], `B(${round(x2)}; ${round(y2)})`),
+		]);
+		return { task, answer };
+	}
+}
+
 export const TASKS = {
 	TaskAdd2,
 	TaskArifmetika1,
 	TaskArifmetika2,
 	TaskArifmetika3,
+	TaskArifmetika4,
+	TaskLinearSystem,
+	TaskLinearGraph,
 }
